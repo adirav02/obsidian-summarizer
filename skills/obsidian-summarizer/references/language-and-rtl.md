@@ -21,7 +21,7 @@ For Hebrew, Arabic, Persian, and other RTL output:
 - Write natural RTL prose without inserting dummy letters or invisible direction hacks
 - Keep code blocks, URLs, paths, commands, identifiers, and formulas unchanged
 - Place code and mathematical notation on their own lines when surrounding directionality becomes confusing
-- Keep Mermaid syntax left-to-right while allowing readable labels in the output language
+- Keep Mermaid syntax left-to-right, but resolve each diagram's visual direction from that diagram's own labels. Follow the per-diagram direction and width policy in [obsidian-formatting.md](obsidian-formatting.md); do not inherit direction from the surrounding note.
 - Prefer short table cells when mixing RTL prose with English identifiers
 - Put natural-language equation explanations outside math delimiters
 - Keep all natural-language text inside inline and display LaTeX in English, regardless of the output language

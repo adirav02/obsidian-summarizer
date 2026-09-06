@@ -192,6 +192,145 @@ class CheckNoteTests(unittest.TestCase):
             )
             self.assertNotIn("missing-common-mistakes", self.codes(note, profile))
 
+    def test_hebrew_flowchart_lr_is_rejected(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(directory, "```mermaid\nflowchart LR\nA[שאילתה] --> B[תגובות]\n```\n")
+            self.assertIn("mermaid-direction-mismatch", self.codes(note))
+
+    def test_hebrew_graph_lr_is_rejected(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(directory, "```mermaid\ngraph LR\nA[שאילתה] --> B[תגובות]\n```\n")
+            self.assertIn("mermaid-direction-mismatch", self.codes(note))
+
+    def test_hebrew_flowchart_rl_is_accepted(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(directory, "```mermaid\nflowchart RL\nA[שאילתה] --> B[תגובות]\n```\n")
+            self.assertNotIn("mermaid-direction-mismatch", self.codes(note))
+
+    def test_hebrew_vertical_flowchart_is_accepted(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(directory, "```mermaid\nflowchart TD\nA[שאילתה] --> B[תגובות]\n```\n")
+            codes = self.codes(note)
+            self.assertNotIn("mermaid-direction-mismatch", codes)
+            self.assertNotIn("mermaid-direction-unverifiable", codes)
+
+    def test_english_flowchart_and_graph_lr_are_accepted(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "```mermaid\nflowchart LR\nA[Fetch comments] --> B[Comments]\n```\n\n"
+                "```mermaid\ngraph LR\nA[Request] --> B[Response]\n```\n",
+            )
+            self.assertNotIn("mermaid-direction-mismatch", self.codes(note))
+
+    def test_english_flowchart_rl_requires_intentional_marker(self):
+        with TemporaryDirectory() as directory:
+            rejected = self.write_note(
+                directory,
+                "```mermaid\nflowchart RL\nA[Fetch comments] --> B[Comments]\n```\n",
+            )
+            self.assertIn("mermaid-direction-mismatch", self.codes(rejected))
+            accepted = self.write_note(
+                directory,
+                "```mermaid\n%% direction: intentional\n"
+                "flowchart RL\nA[Newest state] --> B[Earlier state]\n```\n",
+            )
+            self.assertNotIn("mermaid-direction-mismatch", self.codes(accepted))
+
+    def test_english_vertical_flowchart_is_accepted(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(directory, "```mermaid\nflowchart TD\nA[Request] --> B[Response]\n```\n")
+            self.assertNotIn("mermaid-direction-mismatch", self.codes(note))
+
+    def test_diagram_direction_does_not_inherit_note_language(self):
+        with TemporaryDirectory() as directory:
+            rtl_note = self.write_note(
+                directory,
+                "# הערה בעברית\n\n```mermaid\nflowchart LR\nA[Request] --> B[Response]\n```\n",
+            )
+            self.assertNotIn("mermaid-direction-mismatch", self.codes(rtl_note))
+            ltr_note = self.write_note(
+                directory,
+                "# English note\n\n```mermaid\nflowchart RL\nA[שאילתה] --> B[תגובה]\n```\n",
+            )
+            self.assertNotIn("mermaid-direction-mismatch", self.codes(ltr_note))
+
+    def test_lr_text_outside_mermaid_does_not_trigger(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "The letters LR are ordinary prose.\n\n```text\nflowchart LR\nA[עברית]\n```\n",
+            )
+            codes = self.codes(note)
+            self.assertNotIn("mermaid-direction-mismatch", codes)
+            self.assertNotIn("mermaid-direction-unverifiable", codes)
+
+    def test_multiple_mermaid_diagrams_are_checked_independently(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "```mermaid\nflowchart LR\nA[שאילתה] --> B[תגובה]\n```\n\n"
+                "```mermaid\nflowchart RL\nA[Request] --> B[Response]\n```\n",
+            )
+            findings = [
+                finding for finding in check_note(note) if finding.code == "mermaid-direction-mismatch"
+            ]
+            self.assertEqual(len(findings), 2)
+
+    def test_valid_rtl_and_ltr_diagrams_can_coexist(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "```mermaid\nflowchart RL\nA[שאילתה] --> B[תגובה]\n```\n\n"
+                "```mermaid\nflowchart LR\nA[Request] --> B[Response]\n```\n",
+            )
+            codes = self.codes(note)
+            self.assertNotIn("mermaid-direction-mismatch", codes)
+            self.assertNotIn("mermaid-direction-unverifiable", codes)
+
+    def test_arabic_persian_and_urdu_horizontal_diagrams_are_rtl(self):
+        labels = ("العربية", "فارسی", "اردو")
+        with TemporaryDirectory() as directory:
+            for label in labels:
+                with self.subTest(label=label):
+                    note = self.write_note(
+                        directory,
+                        f"```mermaid\nflowchart LR\nA[{label}] --> B[{label}]\n```\n",
+                    )
+                    self.assertIn("mermaid-direction-mismatch", self.codes(note))
+
+    def test_mixed_language_diagram_uses_dominance_or_explicit_metadata(self):
+        with TemporaryDirectory() as directory:
+            dominant = self.write_note(
+                directory,
+                "```mermaid\nflowchart RL\nA[שאילתה query] --> B[תגובות נוספות]\n```\n",
+            )
+            self.assertNotIn("mermaid-direction-mismatch", self.codes(dominant))
+            explicit = self.write_note(
+                directory,
+                "```mermaid\n%% language: en\nflowchart LR\n"
+                "A[שאילתה query] --> B[תגובות response]\n```\n",
+            )
+            codes = self.codes(explicit)
+            self.assertNotIn("mermaid-direction-mismatch", codes)
+            self.assertNotIn("mermaid-direction-unverifiable", codes)
+
+    def test_ambiguous_horizontal_diagram_requires_metadata_or_vertical_layout(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(directory, "```mermaid\nflowchart LR\nA --> B\n```\n")
+            self.assertIn("mermaid-direction-unverifiable", self.codes(note))
+
+    def test_horizontal_rule_does_not_interfere_with_frontmatter(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "---\ntags: [study]\n---\n\n# Topic\n\nFirst unit.\n\n---\n\n"
+                "## Glossary\n\nTerm.\n\n> [!summary] One-sentence takeaway\n"
+                "> **The central insight.**\n",
+            )
+            profile = load_effective_profile(overrides=["common_mistakes=false"])
+            self.assertEqual(check_note(note, profile), [])
+
     def test_code_fence_table_example_is_not_checked(self):
         with TemporaryDirectory() as directory:
             note = self.write_note(

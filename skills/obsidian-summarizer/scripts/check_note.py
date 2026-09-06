@@ -8,6 +8,7 @@ import bisect
 import json
 import re
 import sys
+import unicodedata
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable
@@ -32,6 +33,27 @@ ENTITY_RE = re.compile(r"&(?:#\d+|#x[0-9A-Fa-f]+|[A-Za-z][A-Za-z0-9]+);")
 MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[([^\]]*)\]\((?:<[^>]+>|[^)]*)\)")
 WIKILINK_RE = re.compile(r"!?\[\[[^\]]+\]\]")
 HIGHLIGHT_RE = re.compile(r"==[^=\n]+==")
+MERMAID_DIRECTION_RE = re.compile(r"^\s*(?:flowchart|graph)\s+(LR|RL|TD|TB|BT)\b", re.IGNORECASE)
+MERMAID_LANGUAGE_RE = re.compile(r"^\s*%%\s*(?:language|lang)\s*:\s*([A-Za-z0-9_-]+)\s*$", re.IGNORECASE)
+MERMAID_INTENTIONAL_REVERSE_RE = re.compile(
+    r"^\s*%%\s*direction\s*:\s*intentional\s*$", re.IGNORECASE
+)
+MERMAID_LABEL_RE = re.compile(r"\[([^\[\]]+)\]|\|([^|]+)\||\"([^\"]+)\"")
+RTL_LANGUAGE_TAGS = {
+    "ar",
+    "arc",
+    "ckb",
+    "dv",
+    "fa",
+    "he",
+    "ku-arab",
+    "ps",
+    "sd",
+    "syr",
+    "ug",
+    "ur",
+    "yi",
+}
 
 # Strong signals of natural-language text, not a blanket Unicode ban. Greek is
 # deliberately excluded because individual Greek letters are ordinary math symbols.
@@ -219,6 +241,76 @@ def _enabled(value: object) -> bool:
     return value is True or str(value).casefold() == "true"
 
 
+def _diagram_direction(lines: list[str]) -> str | None:
+    """Resolve one diagram from explicit metadata, then dominant label direction."""
+    for line in lines:
+        match = MERMAID_LANGUAGE_RE.fullmatch(line)
+        if not match:
+            continue
+        language = match.group(1).casefold()
+        if language in {"rtl", "ltr"}:
+            return language
+        primary = language.split("-", 1)[0]
+        return "rtl" if language in RTL_LANGUAGE_TAGS or primary in RTL_LANGUAGE_TAGS else "ltr"
+
+    labels = " ".join(
+        part
+        for line in lines
+        for match in MERMAID_LABEL_RE.finditer(line)
+        for part in match.groups()
+        if part
+    )
+    rtl_letters = sum(unicodedata.bidirectional(char) in {"R", "AL"} for char in labels)
+    ltr_letters = sum(unicodedata.bidirectional(char) == "L" for char in labels)
+    if rtl_letters > ltr_letters:
+        return "rtl"
+    if ltr_letters > rtl_letters:
+        return "ltr"
+    return None
+
+
+def check_mermaid_direction(lines: list[str], start_line: int, findings: list[Finding]) -> None:
+    declaration: tuple[int, str] | None = None
+    for offset, line in enumerate(lines):
+        match = MERMAID_DIRECTION_RE.match(line)
+        if match:
+            declaration = (start_line + offset, match.group(1).upper())
+            break
+    if declaration is None or declaration[1] in {"TD", "TB", "BT"}:
+        return
+
+    line_number, layout = declaration
+    direction = _diagram_direction(lines)
+    intentional_reverse = any(MERMAID_INTENTIONAL_REVERSE_RE.fullmatch(line) for line in lines)
+    if direction is None:
+        findings.append(
+            Finding(
+                "error",
+                "mermaid-direction-unverifiable",
+                line_number,
+                "Horizontal Mermaid direction is ambiguous; use diagram language metadata or a vertical layout",
+            )
+        )
+    elif direction == "rtl" and layout == "LR":
+        findings.append(
+            Finding(
+                "error",
+                "mermaid-direction-mismatch",
+                line_number,
+                "RTL Mermaid labels require RL rather than LR for a horizontal layout",
+            )
+        )
+    elif direction == "ltr" and layout == "RL" and not intentional_reverse:
+        findings.append(
+            Finding(
+                "error",
+                "mermaid-direction-mismatch",
+                line_number,
+                "LTR Mermaid labels require LR unless reverse direction is explicitly intentional",
+            )
+        )
+
+
 def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Finding]:
     profile = profile or {}
     lines = path.read_text(encoding="utf-8").splitlines()
@@ -231,6 +323,9 @@ def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Fin
     prose_math_state = False
     in_frontmatter = bool(lines and lines[0].strip() == "---")
     in_callout = False
+    in_mermaid = False
+    mermaid_lines: list[str] = []
+    mermaid_start_line = 1
 
     for number, original_line in enumerate(lines, start=1):
         if in_frontmatter:
@@ -246,11 +341,20 @@ def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Fin
             marker = fence.group(1)
             if not in_fence:
                 in_fence, fence_marker = True, marker[0]
+                fence_language = normalized[fence.end() :].strip().split(maxsplit=1)
+                in_mermaid = bool(fence_language and fence_language[0].casefold() == "mermaid")
+                mermaid_lines = []
+                mermaid_start_line = number + 1
             elif marker[0] == fence_marker:
+                if in_mermaid:
+                    check_mermaid_direction(mermaid_lines, mermaid_start_line, findings)
                 in_fence, fence_marker = False, ""
+                in_mermaid = False
             content_lines.append(None)
             continue
         if in_fence:
+            if in_mermaid:
+                mermaid_lines.append(normalized)
             content_lines.append(None)
             continue
 

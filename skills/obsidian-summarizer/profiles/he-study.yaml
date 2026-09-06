@@ -14,6 +14,7 @@ highlights: central_insights
 common_mistakes: true
 glossary: true
 one_sentence_takeaway: true
+section_dividers: between_major_topics
 create_or_update_moc: false
 punctuation:
   semicolons_in_prose: forbid

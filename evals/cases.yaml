@@ -34,6 +34,7 @@ cases:
       - honest figure extraction
       - relative image paths
       - captions that direct attention
+      - per-diagram Mermaid direction and note-width readability
 
   - id: repair_existing_note
     fixture: fixtures/malformed-existing-note.md
