@@ -13,18 +13,20 @@ Turn source material into a self-contained Obsidian note that helps the reader u
 
 Determine the source scope, desired depth, note purpose, and output language from the current request. Ask only when missing information would materially change the result.
 
-Resolve output language in this order:
+Always load and resolve preferences in this order:
 
-1. An explicit language in the current request
-2. `output_language` in a user-selected profile
-3. English
+1. Load [profiles/default.yaml](profiles/default.yaml).
+2. Deep-merge a user-selected profile over those defaults.
+3. Apply explicit instructions in the current request over both profiles.
 
-Do not infer output language from the source language. A request-specific instruction overrides a profile, and a profile overrides the public default. Treat style values such as `auto`, `adaptive`, and `when_useful` as decision policies, not literal output.
+Merge mappings recursively. A value supplied at a leaf replaces the earlier value; an omitted field inherits the earlier value. Lists replace earlier lists rather than being appended. English remains the default `output_language`. Do not infer output language from the source language. Treat style values such as `auto`, `adaptive`, and `when_useful` as decision policies, not literal output.
 
 If the user selects a profile, read it before drafting. The bundled profiles are:
 
 - [profiles/default.yaml](profiles/default.yaml) for public defaults
 - [profiles/he-study.yaml](profiles/he-study.yaml) for Adir's Hebrew study-note preferences
+
+Keep the effective preferences used for drafting available for validation. When running the checker, pass the selected profile with `--profile` and represent current-request exceptions with repeatable `--set KEY=VALUE` arguments. Do not edit the default profile to encode a one-off request.
 
 ## Load only relevant guidance
 
@@ -54,6 +56,12 @@ Use the source map and selected profile. A substantial learning note normally in
 This is a flexible teaching structure, not a mandatory heading template. For short material, omit sections that would be empty or artificial. Do not pad the note to hit a word count.
 
 Do not create or update a MOC unless the user explicitly asks. Do not silently alter unrelated notes or vault configuration.
+
+## Keep natural language in LaTeX English-only
+
+Inside every inline or display LaTeX region, natural-language text must be English. This applies to every command that can contain text, not only `\text{...}`, and cannot be overridden by a request or renderer capability in this version of the skill. Put explanations in the note's output language outside the math delimiters.
+
+Mathematical symbols, Greek letters, variables, numbers, and valid LaTeX commands remain allowed. This compatibility constraint is specific to the skill; it is not a claim that every Obsidian installation fails to render other languages in math.
 
 ## Handle assets honestly
 

@@ -6,6 +6,8 @@ For each case, give the evaluator only the request, source fixture, installed sk
 
 Do not tell the evaluator the expected defects in advance. Record observed failures and make narrow instruction changes supported by those failures.
 
+The checked-in `examples/` directory provides full English and Hebrew evidence packages. They are hand-authored reference outputs, not transcripts of an independent skill invocation. Each evaluation states what was actually reviewed and records the checker command and result. Do not claim an Obsidian renderer check unless one was really run.
+
 The initial acceptance target is:
 
 - No checker errors

@@ -20,4 +20,9 @@ punctuation:
   em_dash: replace_with_hyphen
 latex:
   prose_outside_math: true
-  text_command_language: English
+  natural_language_inside_math: English_only
+section_headings:
+  English:
+    glossary: ["glossary"]
+    one_sentence_takeaway: ["one-sentence takeaway", "one sentence takeaway"]
+    common_mistakes: ["common mistake", "common mistakes"]

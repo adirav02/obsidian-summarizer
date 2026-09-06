@@ -36,7 +36,9 @@ Avoid HTML labels, fragile styling, and unverified syntax. Use a table or prose 
 
 ## LaTeX
 
-Use `$...$` for short inline math and `$$...$$` for display math. Keep natural-language explanations outside the formula. Text inside `\text{...}` or similar commands must be English, even when the surrounding note is RTL, unless the user explicitly overrides this constraint and their renderer is known to support it.
+Use `$...$` for short inline math and `$$...$$` for display math. Keep natural-language explanations outside the formula. Any natural-language text inside math must be English, in inline and display math and in every text-bearing command, including nested commands. This constraint has no request or renderer exception in this version of the skill.
+
+Do not interpret this as an ASCII-only rule. Mathematical symbols such as `α`, `β`, and `∑`, variables, numbers, and valid commands such as `\frac` are allowed. The checker detects selected non-Latin linguistic scripts in math, including multiline and nested content. It does not reliably identify Latin-script non-English words or distinguish every ambiguous Unicode use; review all text-bearing LaTeX commands qualitatively.
 
 After a formula, explain:
 

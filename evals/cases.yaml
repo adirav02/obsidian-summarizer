@@ -19,7 +19,7 @@ cases:
     focus:
       - language precedence
       - RTL readability
-      - English-only text inside LaTeX commands
+      - English-only natural language throughout inline and display LaTeX
       - symbol and assumption explanations
 
   - id: slides_with_figures

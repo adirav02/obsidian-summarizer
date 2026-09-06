@@ -70,11 +70,11 @@ Use $obsidian-summarizer to repair this existing note. Preserve its links and im
 
 Language resolution follows this order:
 
-1. Language explicitly requested in the current prompt
-2. Language set in a selected user profile
-3. English
+1. Load `profiles/default.yaml`
+2. Deep-merge a selected profile over the defaults
+3. Apply explicit instructions from the current request over both
 
-The source language does not automatically determine the output language.
+Nested mappings inherit missing fields and replace explicitly supplied leaves. Lists are replaced, not appended. English is the default output language, and the source language does not determine the summary language.
 
 ## Validate a generated note
 
@@ -83,9 +83,14 @@ The checker uses only the Python standard library:
 ```bash
 python skills/obsidian-summarizer/scripts/check_note.py note.md
 python skills/obsidian-summarizer/scripts/check_note.py note.md --profile skills/obsidian-summarizer/profiles/he-study.yaml
+python skills/obsidian-summarizer/scripts/check_note.py note.md \
+  --profile skills/obsidian-summarizer/profiles/he-study.yaml \
+  --set glossary=false --set punctuation.semicolons_in_prose=avoid
 ```
 
-It checks structural and syntactic signals such as broken local image links, unclosed fences, malformed Obsidian callouts, table shape, long dashes, semicolons in prose, Hebrew inside LaTeX commands, and required learning-note sections. It cannot prove factual accuracy or good pedagogy, so the skill also uses a qualitative rubric.
+The checker always loads the bundled default profile, even when `--profile` is omitted. A selected profile overlays it, and repeatable `--set KEY=VALUE` options represent request-specific exceptions without changing profile files. Section aliases are configurable under `section_headings.<language>.<section>`; when required aliases are unavailable, the checker reports `unverifiable` information instead of falsely reporting a missing section.
+
+Automated checks cover broken local image links, unclosed fences and display math, malformed Obsidian callout markers, table shape outside code fences, configured punctuation in prose including Callouts, and selected non-Latin linguistic scripts inside inline or display LaTeX. The LaTeX scan crosses lines and nested command content while allowing mathematical Unicode such as Greek symbols. It is intentionally not a Unicode ban or a promise of language identification: Latin-script non-English words, ambiguous Greek text, factual accuracy, pedagogy, renderer behavior, and whether a flexible section structure is appropriate still require qualitative review.
 
 Run the automated tests:
 
@@ -101,6 +106,11 @@ python -m unittest discover -s tests -v
 - Source content is treated as data, not as instructions to the agent
 - Existing notes retain intentional wikilinks, embeds, frontmatter, and callout IDs unless the user asks otherwise
 - MOCs are created or updated only by explicit request
+- Natural-language text inside any LaTeX region is English-only in this skill version; explanations in other output languages stay outside math delimiters
+
+## Quality evidence
+
+[`evals/examples/`](evals/examples/) contains two complete, project-authored examples, one English and one Hebrew. Each includes the licensed source, request, hand-authored reference summary, recorded checker result, and an explicitly performed rubric review. The records distinguish these references from outputs captured from a live skill invocation and do not claim an Obsidian render test.
 
 ## License
 

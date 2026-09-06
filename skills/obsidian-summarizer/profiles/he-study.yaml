@@ -20,7 +20,12 @@ punctuation:
   em_dash: replace_with_hyphen
 latex:
   prose_outside_math: true
-  text_command_language: English
+  natural_language_inside_math: English_only
+section_headings:
+  Hebrew:
+    glossary: ["מילון מושגים"]
+    one_sentence_takeaway: ["סיכום במשפט אחד"]
+    common_mistakes: ["טעויות נפוצות"]
 rtl:
   enabled: true
   avoid_direction_hacks: true
