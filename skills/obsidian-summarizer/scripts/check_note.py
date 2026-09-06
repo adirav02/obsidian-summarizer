@@ -33,6 +33,7 @@ ENTITY_RE = re.compile(r"&(?:#\d+|#x[0-9A-Fa-f]+|[A-Za-z][A-Za-z0-9]+);")
 MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[([^\]]*)\]\((?:<[^>]+>|[^)]*)\)")
 WIKILINK_RE = re.compile(r"!?\[\[[^\]]+\]\]")
 HIGHLIGHT_RE = re.compile(r"==[^=\n]+==")
+TABLE_SEPARATOR_RE = re.compile(r"\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*")
 MERMAID_DIRECTION_RE = re.compile(r"^\s*(?:flowchart|graph)\s+(LR|RL|TD|TB|BT)\b", re.IGNORECASE)
 MERMAID_LANGUAGE_RE = re.compile(r"^\s*%%\s*(?:language|lang)\s*:\s*([A-Za-z0-9_-]+)\s*$", re.IGNORECASE)
 MERMAID_INTENTIONAL_REVERSE_RE = re.compile(
@@ -431,6 +432,7 @@ def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Fin
         previous_level = level
 
     check_tables(content_lines, findings)
+    check_glossary_table(content_lines, headings, profile, findings)
     check_learning_sections(headings, callout_titles, profile, findings)
     return sorted(findings, key=lambda item: (item.line, item.level, item.code))
 
@@ -442,10 +444,9 @@ def split_table_row(line: str) -> list[str]:
 
 def check_tables(lines: list[str | None], findings: list[Finding]) -> None:
     index = 0
-    separator = re.compile(r"\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*")
     while index < len(lines) - 1:
         header, divider = lines[index], lines[index + 1]
-        if header is None or divider is None or "|" not in header or not separator.fullmatch(divider):
+        if header is None or divider is None or "|" not in header or not TABLE_SEPARATOR_RE.fullmatch(divider):
             index += 1
             continue
         expected = len(split_table_row(header))
@@ -463,6 +464,55 @@ def check_tables(lines: list[str | None], findings: list[Finding]) -> None:
                 )
             cursor += 1
         index = cursor
+
+
+def check_glossary_table(
+    lines: list[str | None],
+    headings: list[tuple[int, int, str]],
+    profile: dict[str, object],
+    findings: list[Finding],
+) -> None:
+    if not _enabled(profile.get("glossary")):
+        return
+    language = str(profile.get("output_language", "English"))
+    aliases = profile.get(f"section_headings.{language}.glossary")
+    if isinstance(aliases, str):
+        aliases = [aliases]
+    if not isinstance(aliases, list) or not aliases:
+        return
+    normalized_aliases = [str(alias).casefold() for alias in aliases]
+    glossary_headings = [
+        (position, line_number, level)
+        for position, (line_number, level, title) in enumerate(headings)
+        if any(alias in title.casefold() for alias in normalized_aliases)
+    ]
+    if not glossary_headings:
+        return
+
+    for position, line_number, level in glossary_headings:
+        end_line = len(lines) + 1
+        for next_line, next_level, _ in headings[position + 1 :]:
+            if next_level <= level:
+                end_line = next_line
+                break
+        for index in range(line_number, min(end_line - 1, len(lines) - 1)):
+            header, divider = lines[index], lines[index + 1]
+            if (
+                header is not None
+                and divider is not None
+                and "|" in header
+                and TABLE_SEPARATOR_RE.fullmatch(divider)
+            ):
+                return
+
+    findings.append(
+        Finding(
+            "error",
+            "glossary-not-table",
+            glossary_headings[0][1],
+            "The requested glossary must be formatted as a Markdown table",
+        )
+    )
 
 
 def check_learning_sections(

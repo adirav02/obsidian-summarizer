@@ -12,7 +12,7 @@ Score a substantial note from 0 to 2 on each dimension. A score of 0 means missi
 | Obsidian structure | Headings, sparing major-topic dividers, compact mistake bullets, summary callout, links, embeds, code, and frontmatter create a useful hierarchy without fragmenting the narrative |
 | Visual judgment | Mermaid direction follows each diagram's language, wide diagrams remain readable, and visuals are used only where they improve understanding |
 | Language quality | Prose is natural in the chosen language and technical terms are consistent |
-| Review value | Semantic scan anchors, common mistakes, and glossary entries help later study without fragmenting the narrative |
+| Review value | Semantic scan anchors, common mistakes, and a compact glossary table help later study without fragmenting the narrative |
 | Restraint | No filler, decorative overload, invented context, forced personalization, distracting details, or unnecessary repetition |
 
 A relevant and accurate connection to the user's real work can strengthen the teaching evidence, but its absence does not lower a score when no reliable context is available. Forced, invented, or distracting personalization should lower factual fidelity or restraint as appropriate.
@@ -27,6 +27,7 @@ A relevant and accurate connection to the user's real work can strengthen the te
 - Does each horizontal Mermaid diagram follow its own label direction, and would a vertical layout be clearer at normal note width?
 - Do horizontal rules mark real conceptual transitions rather than decorate or fragment the note?
 - Are short mistakes compact while genuinely complex misconceptions retain enough structure and explanation?
+- Is the glossary a readable term-to-meaning table rather than a long list?
 - Are important assumptions and limitations still visible?
 - Are code and equations explained rather than merely copied?
 - Would removing any section make the note clearer without losing value?

@@ -42,6 +42,8 @@ Present the connection as an applied learning addition rather than an example or
 
 Explain a technical term at first meaningful use. Preserve the accepted source or domain term, optionally alongside a translation. Define it again briefly in the glossary for review.
 
+Render the glossary as a compact Markdown table in every output language, normally with one column for the term and one for its meaning. Use one row per term, keep definitions self-contained, and preserve important qualifications. If a concept needs a substantial explanation, teach it in the narrative and keep its glossary row concise. Do not substitute a bullet list for the glossary.
+
 Depth comes from causal explanation, assumptions, edge cases, and worked reasoning. It does not come from repeating the same claim, adding decorative sections, or imposing a minimum word count.
 
 For code, explain the responsibility of the example, the important lines or stages, expected output, and relevant limitation. For equations, explain the symbols, assumptions, and interpretation outside the formula.

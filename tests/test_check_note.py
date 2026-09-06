@@ -27,7 +27,8 @@ class CheckNoteTests(unittest.TestCase):
         with TemporaryDirectory() as directory:
             note = self.write_note(
                 directory,
-                "# Topic\n\n## Common mistakes\n\nNone.\n\n## Glossary\n\nTerm.\n\n"
+                "# Topic\n\n## Common mistakes\n\nNone.\n\n## Glossary\n\n"
+                "| Term | Meaning |\n|---|---|\n| Item | Definition |\n\n"
                 "## One-sentence takeaway\n\nDone.\n",
             )
             self.assertEqual(check_note(note, load_effective_profile()), [])
@@ -152,7 +153,8 @@ class CheckNoteTests(unittest.TestCase):
         with TemporaryDirectory() as directory:
             note = self.write_note(
                 directory,
-                "# Topic\n\n## Glossary\n\nTerm.\n\n"
+                "# Topic\n\n## Glossary\n\n| Term | Meaning |\n|---|---|\n"
+                "| Item | Definition |\n\n"
                 "> [!summary] One-sentence takeaway\n> **The central insight is concise.**\n",
             )
             profile = load_effective_profile(overrides=["common_mistakes=false"])
@@ -325,7 +327,8 @@ class CheckNoteTests(unittest.TestCase):
             note = self.write_note(
                 directory,
                 "---\ntags: [study]\n---\n\n# Topic\n\nFirst unit.\n\n---\n\n"
-                "## Glossary\n\nTerm.\n\n> [!summary] One-sentence takeaway\n"
+                "## Glossary\n\n| Term | Meaning |\n|---|---|\n| Item | Definition |\n\n"
+                "> [!summary] One-sentence takeaway\n"
                 "> **The central insight.**\n",
             )
             profile = load_effective_profile(overrides=["common_mistakes=false"])
@@ -398,7 +401,8 @@ class CheckNoteTests(unittest.TestCase):
         with TemporaryDirectory() as directory:
             note = self.write_note(
                 directory,
-                "# Tema\n\n## Glosario\n\nTérmino.\n\n## Idea central\n\nResultado.\n",
+                "# Tema\n\n## Glosario\n\n| Término | Significado |\n|---|---|\n"
+                "| Elemento | Definición |\n\n## Idea central\n\nResultado.\n",
             )
             profile = load_effective_profile(
                 overrides=[
@@ -412,6 +416,48 @@ class CheckNoteTests(unittest.TestCase):
             self.assertNotIn("missing-glossary", codes)
             self.assertNotIn("unverifiable-glossary", codes)
             self.assertNotIn("missing-one-sentence-takeaway", codes)
+
+    def test_glossary_list_is_rejected_when_glossary_is_required(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "# Topic\n\n## Glossary\n\n- **Term** - Definition.\n",
+            )
+            profile = load_effective_profile(overrides=["one_sentence_takeaway=false"])
+            self.assertIn("glossary-not-table", self.codes(note, profile))
+
+    def test_glossary_markdown_table_is_accepted(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "# Topic\n\n## Glossary\n\n| Term | Meaning |\n|---|---|\n"
+                "| **Index** | A structure that accelerates access. |\n",
+            )
+            profile = load_effective_profile(overrides=["one_sentence_takeaway=false"])
+            self.assertNotIn("glossary-not-table", self.codes(note, profile))
+
+    def test_table_outside_glossary_does_not_satisfy_glossary_format(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "# Topic\n\n| A | B |\n|---|---|\n| one | two |\n\n"
+                "## Glossary\n\n- **Term** - Definition.\n",
+            )
+            profile = load_effective_profile(overrides=["one_sentence_takeaway=false"])
+            self.assertIn("glossary-not-table", self.codes(note, profile))
+
+    def test_hebrew_glossary_table_is_accepted(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "# נושא\n\n## מילון מושגים\n\n| מונח | משמעות |\n|---|---|\n"
+                "| **אינדקס** | מבנה שמאיץ גישה לנתונים. |\n",
+            )
+            profile = load_effective_profile(
+                ROOT / "skills" / "obsidian-summarizer" / "profiles" / "he-study.yaml",
+                ["one_sentence_takeaway=false", "common_mistakes=false"],
+            )
+            self.assertNotIn("glossary-not-table", self.codes(note, profile))
 
 
 if __name__ == "__main__":

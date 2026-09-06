@@ -19,7 +19,7 @@
 | Obsidian structure | 2 | Uses coherent headings, purposeful callouts, math, compact mistake bullets, and a summary callout. |
 | Visual judgment | 2 | Uses only a small equation where it clarifies timing and avoids decorative visuals. |
 | Language quality | 2 | English prose and terminology are consistent. |
-| Review value | 2 | Mistakes and glossary support recall without duplicating the explanation. |
+| Review value | 2 | Compact mistakes and the glossary table support recall without duplicating the explanation. |
 | Restraint | 2 | No invented assets, citations, or unrelated sections. |
 
 **Total: 20/20.** No dimension scored zero. This is a documented human rubric review, not an automated factual evaluation.

@@ -39,10 +39,12 @@ An **idempotency key** lets repeated submissions represent the same logical oper
 
 ## Glossary
 
-- **Transient failure** - A temporary condition for which a later attempt may succeed.
-- **Exponential backoff** - A schedule that increases the delay after each failure.
-- **Jitter** - Random variation added to retry timing to reduce synchronization.
-- **Idempotency key** - An identifier that lets a server recognize repeated submissions of one logical operation.
+| Term | Meaning |
+|---|---|
+| **Transient failure** | A temporary condition for which a later attempt may succeed. |
+| **Exponential backoff** | A schedule that increases the delay after each failure. |
+| **Jitter** | Random variation added to retry timing to reduce synchronization. |
+| **Idempotency key** | An identifier that lets a server recognize repeated submissions of one logical operation. |
 
 > [!summary] One-sentence takeaway
 > **Safe retries combine selective error handling, bounded attempts, exponential backoff, jitter, and idempotent operations so recovery does not create a second failure.**
