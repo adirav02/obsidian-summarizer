@@ -32,6 +32,12 @@ When an example is created for teaching rather than taken from the source, label
 
 Prefer one developed example that returns across related concepts over several shallow examples. Use simple numbers and familiar scenarios unless domain realism matters.
 
+## Connections to the user's experience
+
+When reliable conversation context contains a relevant project, implementation, course, previous exercise, or real experience belonging to the user, connect it to the source concept when the mapping materially improves understanding. Prefer a concrete correspondence between what the source explains and something the user actually built, studied, debugged, or designed, and explain why that correspondence is useful.
+
+Present the connection as an applied learning addition rather than an example or claim from the source. A purposeful `tip`, `example`, or `connection` callout may separate it from the source narrative. Never invent project details, constraints, experiences, or results, and do not expose unrelated personal context. Do not force personalization into every note or section, and never let it replace an important source example or explanation. If no reliable and relevant context is available, omit the connection without comment.
+
 ## Terminology and depth
 
 Explain a technical term at first meaningful use. Preserve the accepted source or domain term, optionally alongside a translation. Define it again briefly in the glossary for review.

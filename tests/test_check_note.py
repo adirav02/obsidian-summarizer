@@ -125,6 +125,47 @@ class CheckNoteTests(unittest.TestCase):
             )
             self.assertTrue({"semicolon-prose", "em-dash"}.issubset(codes))
 
+    def test_highlight_markup_inside_callout_is_an_error(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "> [!important] Practical advice\n> ==Do the simple thing first.==\n",
+            )
+            findings = [finding for finding in check_note(note) if finding.code == "highlight-in-callout"]
+            self.assertEqual(len(findings), 1)
+            self.assertEqual(findings[0].level, "error")
+
+    def test_bold_text_inside_callout_is_accepted(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "> [!important] Practical advice\n> **Do the simple thing first.** More context follows.\n",
+            )
+            self.assertNotIn("highlight-in-callout", self.codes(note))
+
+    def test_highlight_markup_outside_callout_is_accepted(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(directory, "# Topic\n\n==This is the central insight.==\n")
+            self.assertNotIn("highlight-in-callout", self.codes(note))
+
+    def test_multiline_callout_content_is_checked_for_highlights(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "> [!tip] Connection\n> Ordinary first line.\n> Another line.\n"
+                "> The ==important mapping== appears later.\n",
+            )
+            findings = [finding for finding in check_note(note) if finding.code == "highlight-in-callout"]
+            self.assertEqual([finding.line for finding in findings], [4])
+
+    def test_plain_blockquote_highlight_is_not_treated_as_callout(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "> A quoted passage.\n> ==Highlight preserved from the quotation.==\n",
+            )
+            self.assertNotIn("highlight-in-callout", self.codes(note))
+
     def test_code_fence_table_example_is_not_checked(self):
         with TemporaryDirectory() as directory:
             note = self.write_note(

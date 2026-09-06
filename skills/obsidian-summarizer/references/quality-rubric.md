@@ -5,20 +5,23 @@ Score a substantial note from 0 to 2 on each dimension. A score of 0 means missi
 | Dimension | Strong evidence |
 |---|---|
 | Source coverage | Every major source idea is represented with proportionate depth |
-| Factual fidelity | Claims, qualifications, equations, examples, and attribution match the source |
+| Factual fidelity | Claims, qualifications, equations, examples, and attribution match the source; applied personal connections are accurate and clearly distinguished |
 | Teaching flow | Motivation, intuition, formal idea, application, and consequence connect naturally |
-| Explanatory depth | The note explains why and how, not only what |
+| Explanatory depth | The note explains why and how, using a relevant concrete connection to reliable user context when it genuinely improves learning |
 | Examples | Examples are developed, correct, interpreted, and clearly attributed |
 | Obsidian structure | Headings, callouts, links, embeds, code, and frontmatter are intentional and valid |
 | Visual judgment | Mermaid, images, equations, and tables are used only where they improve understanding |
 | Language quality | Prose is natural in the chosen language and technical terms are consistent |
 | Review value | Common mistakes and glossary entries help later study rather than repeat headings |
-| Restraint | No filler, decorative overload, invented assets, or unnecessary repetition |
+| Restraint | No filler, decorative overload, invented context, forced personalization, distracting details, or unnecessary repetition |
+
+A relevant and accurate connection to the user's real work can strengthen the teaching evidence, but its absence does not lower a score when no reliable context is available. Forced, invented, or distracting personalization should lower factual fidelity or restraint as appropriate.
 
 ## Final review questions
 
 - Could a reader understand the core idea without reopening the source?
 - Is it clear which content came from the source and which explanation was added?
+- If a personal or project connection is included, is it reliable, relevant, useful, and clearly separate from the source?
 - Does every major visual or callout have a learning purpose?
 - Are important assumptions and limitations still visible?
 - Are code and equations explained rather than merely copied?

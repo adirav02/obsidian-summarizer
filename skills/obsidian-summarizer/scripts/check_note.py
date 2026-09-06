@@ -31,6 +31,7 @@ URL_RE = re.compile(r"(?:https?://|mailto:)[^\s)>]+")
 ENTITY_RE = re.compile(r"&(?:#\d+|#x[0-9A-Fa-f]+|[A-Za-z][A-Za-z0-9]+);")
 MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[([^\]]*)\]\((?:<[^>]+>|[^)]*)\)")
 WIKILINK_RE = re.compile(r"!?\[\[[^\]]+\]\]")
+HIGHLIGHT_RE = re.compile(r"==[^=\n]+==")
 
 # Strong signals of natural-language text, not a blanket Unicode ban. Greek is
 # deliberately excluded because individual Greek letters are ordinary math symbols.
@@ -228,6 +229,7 @@ def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Fin
     content_lines: list[str | None] = []
     prose_math_state = False
     in_frontmatter = bool(lines and lines[0].strip() == "---")
+    in_callout = False
 
     for number, original_line in enumerate(lines, start=1):
         if in_frontmatter:
@@ -236,6 +238,8 @@ def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Fin
                 in_frontmatter = False
             continue
         normalized, quoted = strip_blockquote_prefix(original_line)
+        if not quoted:
+            in_callout = False
         fence = FENCE_RE.match(normalized)
         if fence:
             marker = fence.group(1)
@@ -259,6 +263,19 @@ def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Fin
             match = CALLOUT_RE.fullmatch(marker_text)
             if not match or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", match.group(1)):
                 findings.append(Finding("error", "invalid-callout", number, "Malformed Obsidian callout marker"))
+                in_callout = False
+            else:
+                in_callout = True
+
+        if in_callout and HIGHLIGHT_RE.search(mask_inline_code(normalized)):
+            findings.append(
+                Finding(
+                    "error",
+                    "highlight-in-callout",
+                    number,
+                    "Obsidian highlight markup is not allowed inside callouts",
+                )
+            )
 
         prose = mask_inline_code(normalized)
         prose, prose_math_state = mask_math_for_prose(prose, prose_math_state)

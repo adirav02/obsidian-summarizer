@@ -17,6 +17,8 @@ Use valid Obsidian callout syntax:
 
 Useful types include `abstract`, `note`, `info`, `tip`, `example`, `question`, `warning`, `danger`, `failure`, and `success`. Select the type for its semantic role. Callouts should surface information that benefits from separation, not wrap ordinary paragraphs for decoration.
 
+Never use `==highlight==` inside a callout because the callout already provides visual emphasis. When a particular sentence or phrase still needs emphasis, use `**bold**` selectively. Do not automatically bold the entire callout body, and leave ordinary callout text unformatted when its container is sufficient. Continue using `==highlight==` selectively for central insights in normal prose outside callouts.
+
 Nested or foldable callouts are optional. Preserve custom callout identifiers in existing notes.
 
 ## Mermaid
