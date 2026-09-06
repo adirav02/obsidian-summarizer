@@ -1,0 +1,46 @@
+cases:
+  - id: technical_chapter
+    fixture: fixtures/technical-chapter.md
+    request: >-
+      Use $obsidian-summarizer to create a detailed English Obsidian note from this chapter.
+      Add diagrams and examples only where they improve understanding.
+    profile: ../skills/obsidian-summarizer/profiles/default.yaml
+    focus:
+      - narrative teaching flow
+      - source coverage
+      - developed example
+      - purposeful Mermaid
+
+  - id: math_lecture_hebrew
+    fixture: fixtures/math-lecture.md
+    request: >-
+      Use $obsidian-summarizer with the Hebrew study profile to summarize this lecture in Hebrew.
+    profile: ../skills/obsidian-summarizer/profiles/he-study.yaml
+    focus:
+      - language precedence
+      - RTL readability
+      - English-only text inside LaTeX commands
+      - symbol and assumption explanations
+
+  - id: slides_with_figures
+    fixture: fixtures/slides-with-figures.md
+    request: >-
+      Use $obsidian-summarizer to turn these slides into an Obsidian learning note and retain only useful figures.
+    profile: ../skills/obsidian-summarizer/profiles/default.yaml
+    focus:
+      - connective explanation
+      - honest figure extraction
+      - relative image paths
+      - captions that direct attention
+
+  - id: repair_existing_note
+    fixture: fixtures/malformed-existing-note.md
+    request: >-
+      Use $obsidian-summarizer to repair and deepen this note without changing its intentional wikilinks,
+      frontmatter, or personal annotations. Do not create or update a MOC.
+    profile: ../skills/obsidian-summarizer/profiles/default.yaml
+    focus:
+      - preservation of Obsidian syntax
+      - malformed table repair
+      - removal of direction hacks
+      - no MOC mutation

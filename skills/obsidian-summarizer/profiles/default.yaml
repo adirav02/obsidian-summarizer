@@ -1,0 +1,23 @@
+profile_name: default
+output_language: English
+depth: adaptive
+audience_level: infer_from_request
+narrative_style: explanatory_story
+examples: when_useful
+callouts: when_useful
+mermaid: when_useful
+source_images: when_useful_and_extractable
+tables: when_useful
+emojis: restrained
+bold: restrained
+highlights: key_insights_only
+common_mistakes: when_relevant
+glossary: true
+one_sentence_takeaway: true
+create_or_update_moc: false
+punctuation:
+  semicolons_in_prose: avoid
+  em_dash: replace_with_hyphen
+latex:
+  prose_outside_math: true
+  text_command_language: English

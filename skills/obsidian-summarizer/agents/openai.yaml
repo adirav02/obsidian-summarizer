@@ -1,0 +1,8 @@
+interface:
+  display_name: "Obsidian Summarizer"
+  short_description: "Create rich multilingual Obsidian learning notes"
+  brand_color: "#7C3AED"
+  default_prompt: "Use $obsidian-summarizer to turn this source into a clear, engaging Obsidian learning note."
+
+policy:
+  allow_implicit_invocation: true

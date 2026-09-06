@@ -1,0 +1,27 @@
+profile_name: he-study
+output_language: Hebrew
+depth: detailed
+audience_level: beginner_friendly_without_dumbing_down
+narrative_style: explanatory_story
+examples: frequent_and_developed
+callouts: purposeful
+mermaid: when_useful
+source_images: when_useful_and_extractable
+tables: clear_and_compact
+emojis: moderate_in_headings_and_navigation
+bold: key_terms
+highlights: central_insights
+common_mistakes: true
+glossary: true
+one_sentence_takeaway: true
+create_or_update_moc: false
+punctuation:
+  semicolons_in_prose: forbid
+  em_dash: replace_with_hyphen
+latex:
+  prose_outside_math: true
+  text_command_language: English
+rtl:
+  enabled: true
+  avoid_direction_hacks: true
+  mermaid_labels_may_be_hebrew: true

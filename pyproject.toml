@@ -1,0 +1,9 @@
+[project]
+name = "obsidian-summarizer-skill"
+version = "0.1.0"
+description = "A multilingual AI skill for creating learning-focused Obsidian notes"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+[tool.ruff]
+line-length = 100
