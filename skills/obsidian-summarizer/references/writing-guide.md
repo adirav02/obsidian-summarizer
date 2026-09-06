@@ -48,7 +48,17 @@ For code, explain the responsibility of the example, the important lines or stag
 
 ## Emphasis and tone
 
-Use `**bold**` for important terms and `==highlight==` for conclusions or insights worth revisiting. If everything is emphasized, nothing is emphasized.
+Use `**bold**` selectively to create semantic scan anchors inside coherent narrative paragraphs. Good anchors include an important term at first meaningful use, the decisive part of a definition, a cause-and-effect relationship, an architectural trade-off, an operational consequence, a decision rule, an essential contrast, or a short conclusion embedded in a longer paragraph. The profile value `key_terms_and_scan_anchors` requests this combination of terminology and meaningful argument anchors.
+
+A substantial section should normally reveal enough of its argument through headings, visuals, and emphasized phrases to remain understandable during a quick scan. Account for tables, diagrams, images, headings, and callouts that already provide visual anchors. Do not impose a quota, bold entire paragraphs or every sentence, collect bold fragments in place of prose, or add multiple competing bold spans to a short paragraph. Emphasis must communicate hierarchy rather than decoration.
+
+Reserve `==highlight==` for rare central insights in normal prose outside callouts. If everything is emphasized, nothing is emphasized.
+
+## Common mistakes
+
+Keep one H2 heading for the complete Common Mistakes section in the output language. Present short mistakes as compact bullets with a bold mistake name followed by a concise, self-contained explanation that preserves the qualification and corrective guidance. Do not give every short mistake its own H3 or inflate the table of contents with minor items.
+
+Use an H3 for an individual misconception only when it genuinely needs multiple paragraphs, a developed example, code, an equation, or another substantial explanation. Do not compress a complex misconception until its cause or correction becomes vague. Apply this structural principle in every output language.
 
 Use emojis as navigation cues, especially in section headings or compact labels. Do not place an emoji in every paragraph or decorate serious warnings playfully.
 

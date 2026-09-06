@@ -148,6 +148,18 @@ class CheckNoteTests(unittest.TestCase):
             note = self.write_note(directory, "# Topic\n\n==This is the central insight.==\n")
             self.assertNotIn("highlight-in-callout", self.codes(note))
 
+    def test_summary_callout_satisfies_required_takeaway(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "# Topic\n\n## Glossary\n\nTerm.\n\n"
+                "> [!summary] One-sentence takeaway\n> **The central insight is concise.**\n",
+            )
+            profile = load_effective_profile(overrides=["common_mistakes=false"])
+            codes = self.codes(note, profile)
+            self.assertNotIn("missing-one-sentence-takeaway", codes)
+            self.assertNotIn("highlight-in-callout", codes)
+
     def test_multiline_callout_content_is_checked_for_highlights(self):
         with TemporaryDirectory() as directory:
             note = self.write_note(
@@ -165,6 +177,20 @@ class CheckNoteTests(unittest.TestCase):
                 "> A quoted passage.\n> ==Highlight preserved from the quotation.==\n",
             )
             self.assertNotIn("highlight-in-callout", self.codes(note))
+
+    def test_subheading_for_substantial_common_mistake_remains_valid(self):
+        with TemporaryDirectory() as directory:
+            note = self.write_note(
+                directory,
+                "# Topic\n\n## Common mistakes\n\n"
+                "### Retrying a non-idempotent operation\n\n"
+                "This misconception needs several paragraphs.\n\n"
+                "A developed example and correction follow here.\n",
+            )
+            profile = load_effective_profile(
+                overrides=["glossary=false", "one_sentence_takeaway=false", "common_mistakes=true"]
+            )
+            self.assertNotIn("missing-common-mistakes", self.codes(note, profile))
 
     def test_code_fence_table_example_is_not_checked(self):
         with TemporaryDirectory() as directory:

@@ -10,6 +10,8 @@ cases:
       - source coverage
       - developed example
       - purposeful Mermaid
+      - semantic scan anchors without fragmented prose
+      - compact common mistakes and a final summary callout
 
   - id: math_lecture_hebrew
     fixture: fixtures/math-lecture.md

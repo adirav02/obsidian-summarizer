@@ -19,6 +19,15 @@ Useful types include `abstract`, `note`, `info`, `tip`, `example`, `question`, `
 
 Never use `==highlight==` inside a callout because the callout already provides visual emphasis. When a particular sentence or phrase still needs emphasis, use `**bold**` selectively. Do not automatically bold the entire callout body, and leave ordinary callout text unformatted when its container is sufficient. Continue using `==highlight==` selectively for central insights in normal prose outside callouts.
 
+Render the final one-sentence takeaway as one compact summary callout at the end of the note unless the user requests another structure:
+
+```markdown
+> [!summary] One-sentence takeaway
+> **A concise sentence that states the note's central insight.**
+```
+
+Use the callout title as the section label, without a separate heading immediately before it. Bold the takeaway sentence, keep it genuinely concise, and state the central insight rather than repeating the title. Never use highlight markup inside this callout.
+
 Nested or foldable callouts are optional. Preserve custom callout identifiers in existing notes.
 
 ## Mermaid

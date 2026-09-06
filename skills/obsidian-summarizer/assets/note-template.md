@@ -21,8 +21,9 @@ source: ""
 
 ## ⚠️ Common mistakes
 
-> [!warning] Common mistake
-> {{mistake_and_correction}}
+- **{{short_mistake_name}}** - {{concise_explanation_and_correction}}
+
+- **{{another_short_mistake_name}}** - {{concise_explanation_and_correction}}
 
 ## 📚 Glossary
 
@@ -30,6 +31,5 @@ source: ""
 |---|---|
 | **{{term}}** | {{plain_language_definition}} |
 
-## 🎯 One-sentence takeaway
-
-=={{single_sentence_that_captures_the_note}}==
+> [!summary] One-sentence takeaway
+> **{{single_sentence_that_captures_the_note}}**

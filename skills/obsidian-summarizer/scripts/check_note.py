@@ -22,7 +22,7 @@ class Finding:
 
 
 FENCE_RE = re.compile(r"^\s*(`{3,}|~{3,})")
-CALLOUT_RE = re.compile(r"^\[!([^\]]+)\](?:[+-])?(?:\s+.*)?$")
+CALLOUT_RE = re.compile(r"^\[!([^\]]+)\](?:[+-])?(?:\s+(.*))?$")
 IMAGE_MD_RE = re.compile(r"!\[[^\]]*\]\(([^)]+)\)")
 IMAGE_WIKI_RE = re.compile(r"!\[\[([^\]|#]+)(?:[|#][^\]]*)?\]\]")
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
@@ -226,6 +226,7 @@ def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Fin
     in_fence = False
     fence_marker = ""
     headings: list[tuple[int, int, str]] = []
+    callout_titles: list[str] = []
     content_lines: list[str | None] = []
     prose_math_state = False
     in_frontmatter = bool(lines and lines[0].strip() == "---")
@@ -266,6 +267,8 @@ def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Fin
                 in_callout = False
             else:
                 in_callout = True
+                if match.group(2):
+                    callout_titles.append(match.group(2))
 
         if in_callout and HIGHLIGHT_RE.search(mask_inline_code(normalized)):
             findings.append(
@@ -324,7 +327,7 @@ def check_note(path: Path, profile: dict[str, object] | None = None) -> list[Fin
         previous_level = level
 
     check_tables(content_lines, findings)
-    check_learning_sections(headings, profile, findings)
+    check_learning_sections(headings, callout_titles, profile, findings)
     return sorted(findings, key=lambda item: (item.line, item.level, item.code))
 
 
@@ -359,9 +362,13 @@ def check_tables(lines: list[str | None], findings: list[Finding]) -> None:
 
 
 def check_learning_sections(
-    headings: list[tuple[int, int, str]], profile: dict[str, object], findings: list[Finding]
+    headings: list[tuple[int, int, str]],
+    callout_titles: list[str],
+    profile: dict[str, object],
+    findings: list[Finding],
 ) -> None:
     titles = [title.casefold() for _, _, title in headings]
+    normalized_callout_titles = [title.casefold() for title in callout_titles]
     language = str(profile.get("output_language", "English"))
     requested = ("glossary", "one_sentence_takeaway", "common_mistakes")
     for key in requested:
@@ -381,7 +388,10 @@ def check_learning_sections(
             )
             continue
         normalized_aliases = [str(alias).casefold() for alias in aliases]
-        if not any(any(alias in title for alias in normalized_aliases) for title in titles):
+        candidate_titles = titles
+        if key == "one_sentence_takeaway":
+            candidate_titles = titles + normalized_callout_titles
+        if not any(any(alias in title for alias in normalized_aliases) for title in candidate_titles):
             findings.append(
                 Finding(
                     "warning",

@@ -16,7 +16,7 @@
 | Teaching flow | 2 | Moves from retry decisions to timing, fleet behavior, and payment safety. |
 | Explanatory depth | 2 | Explains why each mechanism is needed and how mechanisms interact. |
 | Examples | 2 | Develops and interprets the payment timeout example. |
-| Obsidian structure | 2 | Uses coherent headings, one purposeful callout, math, lists, and highlights. |
+| Obsidian structure | 2 | Uses coherent headings, purposeful callouts, math, compact mistake bullets, and a summary callout. |
 | Visual judgment | 2 | Uses only a small equation where it clarifies timing and avoids decorative visuals. |
 | Language quality | 2 | English prose and terminology are consistent. |
 | Review value | 2 | Mistakes and glossary support recall without duplicating the explanation. |

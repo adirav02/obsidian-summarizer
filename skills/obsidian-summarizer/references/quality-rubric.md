@@ -9,10 +9,10 @@ Score a substantial note from 0 to 2 on each dimension. A score of 0 means missi
 | Teaching flow | Motivation, intuition, formal idea, application, and consequence connect naturally |
 | Explanatory depth | The note explains why and how, using a relevant concrete connection to reliable user context when it genuinely improves learning |
 | Examples | Examples are developed, correct, interpreted, and clearly attributed |
-| Obsidian structure | Headings, callouts, links, embeds, code, and frontmatter are intentional and valid |
+| Obsidian structure | Headings, compact mistake bullets, summary callout, links, embeds, code, and frontmatter create a useful hierarchy without a noisy table of contents |
 | Visual judgment | Mermaid, images, equations, and tables are used only where they improve understanding |
 | Language quality | Prose is natural in the chosen language and technical terms are consistent |
-| Review value | Common mistakes and glossary entries help later study rather than repeat headings |
+| Review value | Semantic scan anchors, common mistakes, and glossary entries help later study without fragmenting the narrative |
 | Restraint | No filler, decorative overload, invented context, forced personalization, distracting details, or unnecessary repetition |
 
 A relevant and accurate connection to the user's real work can strengthen the teaching evidence, but its absence does not lower a score when no reliable context is available. Forced, invented, or distracting personalization should lower factual fidelity or restraint as appropriate.
@@ -23,6 +23,8 @@ A relevant and accurate connection to the user's real work can strengthen the te
 - Is it clear which content came from the source and which explanation was added?
 - If a personal or project connection is included, is it reliable, relevant, useful, and clearly separate from the source?
 - Does every major visual or callout have a learning purpose?
+- Can headings, visuals, and selective semantic emphasis recover the main argument during a quick scan?
+- Are short mistakes compact while genuinely complex misconceptions retain enough structure and explanation?
 - Are important assumptions and limitations still visible?
 - Are code and equations explained rather than merely copied?
 - Would removing any section make the note clearer without losing value?

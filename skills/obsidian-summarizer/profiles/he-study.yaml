@@ -9,7 +9,7 @@ mermaid: when_useful
 source_images: when_useful_and_extractable
 tables: clear_and_compact
 emojis: moderate_in_headings_and_navigation
-bold: key_terms
+bold: key_terms_and_scan_anchors
 highlights: central_insights
 common_mistakes: true
 glossary: true

@@ -29,10 +29,13 @@ An **idempotency key** lets repeated submissions represent the same logical oper
 
 ## Common mistakes
 
-- Retrying every error, including permanent failures
-- Allowing unlimited attempts
-- Using identical backoff schedules without jitter
-- Retrying side-effecting operations without idempotency protection
+- **Retrying every error** - Permanent failures should stop rather than create repeated traffic.
+
+- **Allowing unlimited attempts** - A retry limit prevents one operation from contributing unbounded work.
+
+- **Using identical backoff schedules** - Add jitter so clients do not synchronize and create another traffic spike.
+
+- **Retrying side-effecting operations without protection** - Use idempotency mechanisms so a lost response does not turn a retry into a duplicate effect.
 
 ## Glossary
 
@@ -41,6 +44,5 @@ An **idempotency key** lets repeated submissions represent the same logical oper
 - **Jitter** - Random variation added to retry timing to reduce synchronization.
 - **Idempotency key** - An identifier that lets a server recognize repeated submissions of one logical operation.
 
-## One-sentence takeaway
-
-==Safe retries combine selective error handling, bounded attempts, exponential backoff, jitter, and idempotent operations so recovery does not create a second failure.==
+> [!summary] One-sentence takeaway
+> **Safe retries combine selective error handling, bounded attempts, exponential backoff, jitter, and idempotent operations so recovery does not create a second failure.**
