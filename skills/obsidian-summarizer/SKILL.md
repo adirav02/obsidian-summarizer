@@ -35,6 +35,18 @@ Keep the effective preferences used for drafting available for validation. When 
 - Read [references/language-and-rtl.md](references/language-and-rtl.md) for non-English output, translation, bidirectional text, or any RTL language.
 - Read [references/quality-rubric.md](references/quality-rubric.md) before the final review of a substantial note.
 
+## Adapt to available capabilities
+
+Resolve bundled paths from this installed skill directory, never from the process working directory.
+
+- If skill files are readable, load the default profile, deep-merge the selected profile, apply request-level overrides last, and read only the references required above.
+- If file creation is available, save an Obsidian-compatible Markdown note and only real extracted or generated assets. Preserve appropriate relative embeds, wikilinks, and local references. Claim direct Vault delivery only when that Vault is accessible.
+- If command execution and compatible Python are available for a local note, run this skill's `scripts/check_note.py` with the selected profile and allowed request-level `--set` exceptions. Resolve every bundled profile, reference, template, asset, and script from this skill directory.
+- If file output is available without command execution, deliver the Markdown file, state that deterministic validation was not run, and perform the best available manual structural review.
+- If output is text-only, return the complete note in one Markdown code block or the host's equivalent text format. Do not claim that a file was created, saved, or validated.
+- If source extraction is unavailable or incomplete, request a readable source when faithful work is otherwise impossible. When partial work remains useful, summarize only accessible content and disclose the limitation. Never invent missing content, references, quotations, images, or filenames.
+- If image extraction is unavailable, preserve valid existing image references when possible. Use Mermaid or another text-native alternative only when it communicates the same idea accurately, and do not claim that images were extracted.
+
 ## Work from a source map
 
 Before drafting, identify the source's major ideas, explanatory sequence, definitions, examples, equations, code, figures, qualifications, and conclusions. Use that map to prevent omissions and to distinguish central ideas from supporting detail.
@@ -71,6 +83,6 @@ If extraction is unavailable or unreliable, explain the missing asset or use a t
 
 ## Review and deliver
 
-Check the note against the source map and the quality rubric. Verify that diagrams, equations, tables, links, code fences, and callouts are syntactically plausible. Run `scripts/check_note.py` when a local Markdown file exists. Fix errors and review warnings with judgment. The checker supports structure but does not establish factual accuracy or pedagogical quality.
+Check the note against the source map and the quality rubric. Verify that diagrams, equations, tables, links, code fences, and callouts are syntactically plausible. When the required capabilities exist, run the `scripts/check_note.py` bundled in this skill directory against the local Markdown file. Fix errors and review warnings with judgment. The checker supports structure but does not establish factual accuracy or pedagogical quality.
 
 Deliver the Markdown file and any real local assets. Briefly disclose unreadable or unavailable source portions and any important limitations.
